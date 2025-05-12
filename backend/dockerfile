@@ -1,7 +1,41 @@
-FROM node:20-alpine
+# --- Build stage ---
+FROM node:22-alpine AS build
+
 WORKDIR /app
+
+# Install pnpm globally (ou npm si tu préfères)
+RUN npm i -g pnpm
+
+# Copie package.json et lockfile d'abord pour le cache
 COPY package*.json ./
-RUN npm install
+COPY pnpm-lock.yaml* ./
+
+# Install deps (dev inclus pour build)
+RUN pnpm install --frozen-lockfile
+
+# Copie tout le code
 COPY . .
+
+# Build NestJS
+RUN pnpm build
+
+# --- Production stage ---
+FROM node:22-alpine AS prod
+
+WORKDIR /app
+
+# Install pnpm globally (optionnel si tu veux juste node_modules)
+RUN npm i -g pnpm
+
+# Copie seulement le build et les deps prod
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package*.json ./
+
+# Expose le port
 EXPOSE 3001
-CMD ["npm", "run", "start:prod"]
+
+# User non-root (optionnel, mais conseillé)
+USER node
+
+CMD ["node", "dist/main.js"]
