@@ -7,7 +7,7 @@ export default async function Home() {
 
 async function getMessage() {
   try {
-    const response = await fetch("http://localhost:3001/");
+    const response = await fetch(process.env.BACKEND_URL);
     console.log(response);
     return response.text();
   } catch (error) {
