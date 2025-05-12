@@ -6,12 +6,11 @@ WORKDIR /app
 # Install pnpm globally
 RUN npm i -g pnpm
 
-# Copie package.json et lockfile d'abord pour le cache
+# Copie package.json d'abord pour le cache
 COPY package*.json ./
-COPY pnpm-lock.yaml* ./
 
 # Install deps (dev inclus pour build)
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copie tout le code
 COPY . .
@@ -39,4 +38,4 @@ ENV HOSTNAME="0.0.0.0"
 # User non-root (optionnel, mais conseillé)
 USER node
 
-CMD ["npù   ", "node_modules/.bin/next", "start"]
+CMD ["node", "node_modules/.bin/next", "start"]
