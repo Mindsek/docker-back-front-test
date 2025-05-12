@@ -4,7 +4,12 @@ export default async function Home() {
 }
 
 async function getMessage() {
-  const response = await fetch("http://localhost:3001/");
-  console.log(response);
-  return response.text();
+  try {
+    const response = await fetch("http://localhost:3001/");
+    console.log(response);
+    return response.text();
+  } catch (error) {
+    console.error("Error fetching message:", error);
+    return "Error fetching message";
+  }
 }
