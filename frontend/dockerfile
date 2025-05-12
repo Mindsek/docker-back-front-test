@@ -41,4 +41,4 @@ ENV HOSTNAME="0.0.0.0"
 # User non-root (optionnel, mais conseillé)
 USER node
 
-CMD ["node", "node_modules/.bin/next", "start"]
+CMD ["pnpm", "start"]
